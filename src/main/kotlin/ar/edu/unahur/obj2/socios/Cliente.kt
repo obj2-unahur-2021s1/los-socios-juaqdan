@@ -2,50 +2,58 @@ package ar.edu.unahur.obj2.socios
 
 import kotlin.math.max
 
-abstract class Estado {
-    abstract fun propina(unImporte: Int, unCliente: Cliente) : Int
 
+
+class Cliente(val estadoDeAnimo: Animo, val bolsillo: Int, val barrio: Barrio) {
+
+    fun propinaPorAnimo(unImporte: Int) = estadoDeAnimo.propinaDeClientePorImporte(this, unImporte)
+
+    fun propinaPorBarrio(unImporte: Int) = barrio.variacionDe(propinaPorAnimo(unImporte))
 }
 
-object enojado: Estado() {
-    override fun propina(unImporte : Int, unCliente: Cliente) = 0
+
+//***************************Estados de animo******************************************************
+
+abstract class Animo {
+    abstract fun propinaDeClientePorImporte(unCliente: Cliente, unImporte: Int): Int
 }
 
-object feliz: Estado() {
-    override fun propina(unImporte : Int, unCliente: Cliente) = (unImporte / 100) * 25
+object enojado: Animo() {
+    override fun propinaDeClientePorImporte(unCliente: Cliente, unImporte: Int) = 0
 }
 
-object indiferente: Estado() {
-    override fun propina(unImporte : Int, unCliente: Cliente): Int = unCliente.bolsillo
+object feliz: Animo() {
+    override fun propinaDeClientePorImporte(unCliente: Cliente, unImporte: Int) = (unImporte * 0.25).toInt()
 }
 
-object resfriado: Estado() {
-    override fun propina(unImporte: Int, unCliente: Cliente) = unImporte
+object indiferente: Animo() {
+    override fun propinaDeClientePorImporte(unCliente: Cliente, unImporte: Int) = unCliente.bolsillo
 }
 
-/**************Barrio**************/
-
-abstract class Barrio(){
-   abstract fun calcularPropina(unaPropina: Int) : Int
+object resfriado: Animo() {
+    override fun propinaDeClientePorImporte(unCliente: Cliente, unImporte: Int) = unImporte
 }
 
-object LasRosas : Barrio(){
-    override fun calcularPropina(unaPropina: Int) = unaPropina + 50
-}
-object LasLauchas : Barrio(){
-    override fun calcularPropina(unaPropina: Int) = unaPropina / 2
-}
-object BarrioVerde : Barrio(){
-    override fun calcularPropina(unaPropina: Int) = max(unaPropina, 200)
-}
-object LasTorres : Barrio() {
-    override fun calcularPropina(unaPropina: Int) = unaPropina
+
+//***************************Barrios************************************************************
+
+
+abstract class Barrio{
+    abstract fun variacionDe(unaPropina: Int): Int
 }
 
-class Cliente(val estadoDeAnimo: Estado, var bolsillo: Int, var barrio : Barrio) {
+object lasRosas : Barrio(){
+    override fun variacionDe(unaPropina: Int) = unaPropina + 50
+}
 
-    fun propina(unImporte: Int) = estadoDeAnimo.propina(unImporte, this)
+object lasLauchas : Barrio(){
+    override fun variacionDe(unaPropina: Int) = unaPropina / 2
+}
 
-    fun cuantaPropinaDejaria(unImporte: Int) = barrio.calcularPropina(this.propina(unImporte))
+object barrioVerde : Barrio(){
+    override fun variacionDe(unaPropina: Int) = max(200, unaPropina)
+}
 
+object lasTorres : Barrio() {
+    override fun variacionDe(unaPropina: Int) = unaPropina
 }
