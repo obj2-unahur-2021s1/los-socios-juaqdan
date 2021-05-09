@@ -4,14 +4,20 @@ import kotlin.math.max
 
 
 
-class Cliente(val estadoDeAnimo: Animo, val bolsillo: Int, val barrio: Barrio) {
+class Cliente(val estadoDeAnimo: Animo, val bolsillo: Int) {
 
     fun propinaPorAnimo(unImporte: Int) = estadoDeAnimo.propinaDeClientePorImporte(this, unImporte)
 
-    fun propinaPorBarrio(unImporte: Int) = barrio.variacionDe(propinaPorAnimo(unImporte))
+    fun propinaPorBarrio(unImporte: Int) = ubicacion.barrio.variacionDe(propinaPorAnimo(unImporte))
+}
+
+/*****Singleton*******/
+object ubicacion{
+    var barrio: Barrio = lasRosas
 }
 
 
+/*******Strategy*********/
 //***************************Estados de animo******************************************************
 
 abstract class Animo {
@@ -54,6 +60,6 @@ object barrioVerde : Barrio(){
     override fun variacionDe(unaPropina: Int) = max(200, unaPropina)
 }
 
-object lasTorres : Barrio() {
+object lasTorres : Barrio(){
     override fun variacionDe(unaPropina: Int) = unaPropina
 }
